@@ -6,7 +6,7 @@ import {
   GET_POKEMON_SIMPLE_LIST_SUCCESS,
   GET_POKEMON_SIMPLE_LIST_FAIL,
 } from '../actions/action';
-import { PokeAPIInfor, SimplePokeList, SimplePokeResult } from '../../data/dataType';
+import { AbilitiesEntity, PokeAPIInfor, SimplePokeList, SimplePokeResult } from '../../data/dataType';
 
 // Fetch simple list of Pokémon from API
 const fetchPokemonListApi = async (): Promise<SimplePokeList> => {
@@ -24,17 +24,29 @@ const fetchDetailPokeApi = async (name: string): Promise<PokeAPIInfor> => {
   if (!response.ok) {
     throw new Error(`Failed to fetch details for ${name}`);
   }
-  const data: PokeAPIInfor = await response.json();
+  const data = await response.json();
+
+  // Extract and return only the properties defined in PokeAPIInfor
   return {
-    name: data.name,
-    abilities: data.abilities,
-    height: data.height,
     id: data.id,
-    types: data.types,
+    name: data.name,
     weight: data.weight,
-    sprites: data.sprites,
+    height: data.height,
+    abilities: data.abilities.map((ability: AbilitiesEntity) => ({
+      ability: ability.ability.name,
+      is_hidden: ability.is_hidden,
+      slot: ability.slot,
+    })),
+    sprites: {
+      front_default: data.sprites.front_default,
+    },
+    types: data.types.map((type: any) => ({
+      slot: type.slot,
+      type: type.type.name, // Adjust as needed
+    })),
   };
 };
+
 
 // Convert the simple Pokémon result to detailed information
 const convertAPIResponse = async (data: SimplePokeResult[]): Promise<PokeAPIInfor[]> => {
@@ -43,10 +55,10 @@ const convertAPIResponse = async (data: SimplePokeResult[]): Promise<PokeAPIInfo
     return infor;
   });
 
-  // Wait for all promises to resolve
-  const output = await Promise.all(promises);
-  return output;
+
+  return Promise.all(promises);
 };
+
 
 // Worker Saga: will be fired on GET_POKEMON_SIMPLE_LIST actions
 function* fetchPokemonList() {

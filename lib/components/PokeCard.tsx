@@ -32,7 +32,7 @@ const PokeCard = (prop: Prop) => {
         }}
       />
       <Text style={styles.pokeNumb}>{id}</Text>
-      <Image source={{uri: image}}  style={styles.baseImg} />
+      <Image source={{uri: image}}  style={styles.baseImg} resizeMode='contain' resizeMethod='resize'/>
       <Text style={styles.pokeName}>{name}</Text>
     </TouchableOpacity>
   );
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     minHeight: 60,
     marginTop: 10,
     marginBottom: 15,
-    backgroundColor: 'yellow'
   },
   pokeNumb: {
     alignSelf: 'flex-end',

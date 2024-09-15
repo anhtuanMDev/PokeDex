@@ -1,21 +1,40 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
 import PokemonBall from './../assets/pokeball.svg';
 import Back from './../assets/arrow_back.svg';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { ParamList } from '../components/RootNavigation';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import {ParamList} from '../components/RootNavigation';
+import {pokemonType} from '../data/dataEnum';
+type DetailScreenRouteProp = RouteProp<ParamList, 'Detail'>;
 const Detail = () => {
-  const navigate = useNavigation<NavigationProp<ParamList, "Detail">>();
+  const route = useRoute<DetailScreenRouteProp>();
+  const navigate = useNavigation<NavigationProp<ParamList, 'Detail'>>();
+  const {item} = route.params;
+  const backgroundColor = useMemo(() => {
+    const colorType: string = item.types[0].type.name;
+    return pokemonType[colorType as keyof typeof pokemonType] || 'red'; // Fallback color
+  }, [item.types]);
+  useEffect(() => {
+    console.log(item.types);
+  }, []);
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor}]}>
       <View style={[styles.headerBar, styles.header]}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={()=> {navigate.goBack()}}>
-          <Back width={30} height={30} fill={'#ffffffff'} />
+          <TouchableOpacity
+            onPress={() => {
+              navigate.goBack();
+            }}>
+            <Back width={30} height={30} fill={'#ffffffff'} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pokémon Name</Text>
+          <Text style={styles.headerTitle}>{item.name.toUpperCase()}</Text>
         </View>
-        <Text style={styles.headerNumb}>#355</Text>
+        <Text style={styles.headerNumb}>{item.id}</Text>
       </View>
 
       <PokemonBall
@@ -26,11 +45,20 @@ const Detail = () => {
       />
 
       <View style={styles.scaffold}>
+        <Image
+          source={{uri: item.sprites.front_default}}
+          width={300}
+          height={300}
+          resizeMode='stretch'
+          style={styles.image}
+        />
         <Text style={styles.h1Text}>About</Text>
         <View></View>
-        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc iaculis eros vitae tellus condimentum maximus sit amet in eros.</Text>
+        <Text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc iaculis
+          eros vitae tellus condimentum maximus sit amet in eros.
+        </Text>
         <Text style={styles.h1Text}>Base Stats</Text>
-        
       </View>
     </View>
   );
@@ -54,8 +82,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     position: 'absolute',
     top: 0,
-    right: 0,
-    left: 0,
   },
   headerTitle: {
     fontSize: 20,
@@ -70,17 +96,24 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color: 'white',
   },
+  image: {
+    position: 'absolute',
+    top: -180,
+    left: '18%',
+    right: 0,
+  },
   scaffold: {
+    position: 'relative',
     flex: 1,
     backgroundColor: 'white',
     paddingTop: 50,
     paddingHorizontal: 15,
     margin: 5,
     borderRadius: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   h1Text: {
     fontSize: 16,
     fontWeight: '700',
-  }
+  },
 });
