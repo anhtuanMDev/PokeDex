@@ -17,8 +17,8 @@ const RootNavigation = () => {
   return (
     <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name='Home' children={Home}/>
-            <Stack.Screen name='Detail' children={Detail}/>
+            <Stack.Screen name='Home' component={Home}/>
+            <Stack.Screen name='Detail' component={Detail}/>
         </Stack.Navigator>
     </NavigationContainer>
   )

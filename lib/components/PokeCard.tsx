@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View, Dimensions, TouchableOpacity, Image} from 'react-native';
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { convertId } from '../utils/convert';
 
 const width = Dimensions.get('screen').width;
 type Prop = {
@@ -11,13 +11,6 @@ type Prop = {
 }
 const PokeCard = (prop: Prop) => {
   const {name, id, image, onPress} = prop;
-  const dispatch = useDispatch();
-  // const data: dataInfor = useSelector((state: RootState) => state.getPokeCardReducer)
-  
-  useEffect(()=>{
-    // dispatch({ type: GET_POKAEMON_CARD, payload: {name: prop.name}})
-  },[])
-
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View
@@ -31,7 +24,7 @@ const PokeCard = (prop: Prop) => {
           borderRadius: 10
         }}
       />
-      <Text style={styles.pokeNumb}>{id}</Text>
+      <Text style={styles.pokeNumb}>{convertId(parseInt(id))}</Text>
       <Image source={{uri: image}}  style={styles.baseImg} resizeMode='contain' resizeMethod='resize'/>
       <Text style={styles.pokeName}>{name}</Text>
     </TouchableOpacity>

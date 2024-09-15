@@ -23,14 +23,14 @@ export interface PokeAPIInfor {
 }
 
 export interface AbilitiesEntity {
-  ability: SimplePokeResult;
+  ability: string;
   is_hidden: boolean;
   slot: number;
 }
 
 export interface PokeType {
   slot: number;
-  type: SimplePokeResult;
+  type: string;
 }
 
 export interface PokeStats {

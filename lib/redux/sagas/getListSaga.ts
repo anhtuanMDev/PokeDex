@@ -33,7 +33,7 @@ const fetchDetailPokeApi = async (name: string): Promise<PokeAPIInfor> => {
     weight: data.weight,
     height: data.height,
     abilities: data.abilities.map((ability: AbilitiesEntity) => ({
-      ability: ability.ability.name,
+      ability: ability.ability,
       is_hidden: ability.is_hidden,
       slot: ability.slot,
     })),

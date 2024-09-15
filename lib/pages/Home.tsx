@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {PokeAPIInfor} from '../data/dataType';
 import {getHomePokeList} from '../redux/actions/action';
 import {RootState} from '../redux/store';
-import {data} from '../data/data';
+import { data } from '../data/data';
 const width = Dimensions.get('screen').width;
 
 const Home = () => {
@@ -30,10 +30,10 @@ const Home = () => {
   useEffect(() => {
     dispatch(getHomePokeList());
   }, [dispatch]);
-  useEffect(() => {
-    console.log('pokeList item:', pokeList[0]); // Check the format of the first item
 
-  }, [pokeList]);
+  useEffect(() => {
+    console.log(Array.isArray(pokeList)); // This should return true
+  }, [loading]);
 
   // If data is loading or there's an error, handle accordingly
   if (error) return <Text>Error: {error.message}</Text>;
@@ -56,23 +56,20 @@ const Home = () => {
         ) : (
           <FlatList
             // data={data}
-            data={pokeList || []} 
+            data={pokeList}
             extraData={pokeList}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.name} 
             showsVerticalScrollIndicator={false}
             numColumns={3}
-            ListEmptyComponent={() => {
-              console.log("empty component",pokeList)
-              return <Text>No Data Available</Text>;
-            }}
             columnWrapperStyle={{gap: width * 0.035}}
             contentContainerStyle={{gap: 10, flexGrow: 1}}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <PokeCard
                 name={item.name}
-                id={item.id.toString()}
-                image={item.sprites.front_default}
-                onPress={() => navigation.navigate('Detail', { item })}
+                id={item.id.toString()} // Use the detailed ID here
+                image={item.sprites.front_default} // Use the sprite from PokeAPIInfor
+                key={item.id}
+                onPress={() => navigation.navigate('Detail', {item: item})}
               />
             )}
           />
