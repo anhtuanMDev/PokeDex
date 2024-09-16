@@ -4,6 +4,7 @@ export const GET_POKEMON_SIMPLE_LIST = "GET_POKEMON_SIMPLE_LIST" // get normal l
 export const GET_POKEMON_STATS = "GET_POKEMON_STATS" // get stats in detail screen
 export const SORT_POKEMON = "SORT_POKEMON" // sort pokemon by name or id number
 export const SEARCH_FILTER = "SEARCH_FILTER" // filter passed data base input
+export const SEARCH_DISCHARGE = "SEARCH_DISCHARGE" // go back to use normal data
 
 
 export const GET_POKEMON_SIMPLE_LIST_SUCCESS = "GET_POKEMON_SIMPLE_LIST_SUCCESS" // return flatlist data after convert to full pokaemon's infor except stats
@@ -11,12 +12,16 @@ export const CONVERT_API_RESULT_SUCCESS = "CONVERT_API_RESULT_SUCCESS"
 export const GET_POKEMON_STATS_SUCCESS = "GET_POKEMON_STATS_SUCCESS" 
 export const SORT_POKEMON_SUCCESS = "SORT_POKEMON_SUCCESS" 
 export const SEARCH_FILTER_SUCCESS = "SEARCH_FILTER_SUCCESS" 
+export const SEARCH_DISCHARGE_SUCCESS = "SEARCH_DISCHARGE_SUCCESS"
+
 
 export const GET_POKEMON_SIMPLE_LIST_FAIL = "GET_POKEMON_SIMPLE_LIST_FAIL" 
 export const CONVERT_API_RESULT_FAIL = "CONVERT_API_RESULT_FAIL" 
 export const GET_POKEMON_STATS_FAIL = "GET_POKEMON_STATS_FAIL" 
 export const SORT_POKEMON_FAIL = "SORT_POKEMON_FAIL" 
-export const SEARCH_FILTER_FAIL = "SEARCH_FILTER_FAIL" 
+export const SEARCH_FILTER_FAIL = "SEARCH_FILTER_FAIL"
+export const SEARCH_DISCHARGE_FAIL = "SEARCH_DISCHARGE_FAIL"
+
 
 // Action creators for each action type
 export const getHomePokeList = () => ({
@@ -28,14 +33,18 @@ export const getPokemonStats = (id: number) => ({
   payload: id,
 });
 
-export const sortPokemon = (sortBy: "name" | "id") => ({
+export const sortPokemon = (sortBy: "name" | "id", list: PokeAPIInfor[]) => ({
   type: SORT_POKEMON,
-  payload: sortBy,
+  payload: {sortBy, list},
 });
 
-export const searchFilter = (input: string) => ({
+export const searchFilter = (name: string, list: PokeAPIInfor[]) => ({
   type: SEARCH_FILTER,
-  payload: input,
+  payload: {name, list},
+});
+
+export const searchDischarge = () => ({
+  type: SEARCH_DISCHARGE,
 });
 
 // Success actions

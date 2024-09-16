@@ -9,32 +9,40 @@ import React, {useEffect, useState} from 'react';
 import ImageVector from './ImageVector';
 import Searches from './../assets/search.svg';
 import Close from './../assets/close.svg';
-const Search = () => {
+
+type Props = {
+  onSearch: ()=> void;
+  changeText: (text: string) =>void
+  onDischarge: ()=> void
+  value: string
+}
+
+const Search = (prop: Props) => {
   const [focus, setFocus] = useState(false);
-  const [text, setText] = useState('');
+  const {onSearch, changeText, value, onDischarge} = prop;
   const onFocus = () => {
     setFocus(true);
   };
   const onBlur = () => {
     setFocus(false);
   };
-  const deleteSeatch = () => {
-    setText('');
-  };
+
 
   useEffect(() => {
     if (focus) console.log('Is focus');
   }, [focus]);
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.sideButton}>
+      <TouchableOpacity style={styles.sideButton} onPress={()=> onSearch()}>
         <ImageVector
           image={<Searches width={30} height={30} fill={'#DC0A2D'} />}
         />
       </TouchableOpacity>
       <TextInput
-        value={text}
-        onChangeText={setText}
+        value={value}
+        onChangeText={(text) => {
+          changeText(text)
+        }}
         onFocus={onFocus}
         onBlur={onBlur}
         style={styles.inputSearch}
@@ -42,8 +50,8 @@ const Search = () => {
         placeholderTextColor={'#666666'}
       />
       <TouchableOpacity
-        onPress={deleteSeatch}
-        style={[styles.sideButton, {display: text ? 'flex' : 'none'}]}>
+        onPress={() => onDischarge()}
+        style={[styles.sideButton, {display: value ? 'flex' : 'none'}]}>
         <ImageVector
           image={<Close width={25} height={25} fill={'#DC0A2D'} />}
         />

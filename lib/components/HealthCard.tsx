@@ -44,8 +44,8 @@ const HealthCard = (props: Prop) => {
             ability.map(abl => (
               <Text
                 style={[styles.topTitle, {flexShrink: 1, textAlign: 'center'}]}
-                key={abl.ability}>
-                {abl.ability}
+                key={abl.ability.name}>
+                {abl.ability.name}
               </Text>
             ))
           ) : (

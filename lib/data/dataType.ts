@@ -23,7 +23,7 @@ export interface PokeAPIInfor {
 }
 
 export interface AbilitiesEntity {
-  ability: string;
+  ability: SimplePokeResult;
   is_hidden: boolean;
   slot: number;
 }
