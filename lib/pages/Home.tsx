@@ -1,5 +1,5 @@
 import {FlatList, StyleSheet, Text, Dimensions, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import PokemonBall from './../assets/pokeball.svg';
 import Search from '../components/Search';
 import RoundButton from '../components/RoundButton';
@@ -13,13 +13,19 @@ import {
   searchDischarge,
   searchFilter,
   SORT_POKEMON,
+  sortPokemon,
 } from '../redux/actions/action';
 import {RootState} from '../redux/store';
 import {data} from '../data/data';
 import state from 'sweetalert/typings/modules/state';
 import {set} from 'mongoose';
 import {Dialog} from 'react-native-simple-dialogs';
-import {RadioGroup} from 'react-native-radio-buttons-group';
+import {
+  RadioButton,
+  RadioButtonProps,
+  RadioGroup,
+} from 'react-native-radio-buttons-group';
+import watchSortPokeList from '../redux/sagas/sortSaga';
 const width = Dimensions.get('screen').width;
 
 const Home = () => {
@@ -27,20 +33,30 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<ParamList, 'Home'>>();
   const [text, setText] = useState('');
   const [sortDialogVisible, setSortDialogVisible] = useState(false); // State to manage dialog visibility
-  const [radioButtons, setRadioButtons] = useState([
-    {
-      id: '1',
-      label: 'Sort by ID',
-      value: 'id',
-      selected: true,
-    },
-    {
-      id: '2',
-      label: 'Sort by Name',
-      value: 'name',
-      selected: false,
-    },
-  ]);
+  const [selectedId, setSelectedId] = useState('');
+
+  const buttons: RadioButtonProps[] = useMemo(() => {
+    return [
+      {
+        id: '1',
+        borderColor: 'red',
+        color: 'red',
+        selected: true,
+        label: 'Sort by ID',
+        value: 'id',
+        onPress: ()=>setSelectedId('1'),
+      },
+      {
+        id: '2',
+        borderColor: 'red',
+        color: 'red',
+        selected: false,
+        label: 'Sort by Name',
+        value: 'name',
+        onPress: ()=>setSelectedId('2'),
+      },
+    ];
+  }, []);
   // Define selectors inline
   const selectPokeList = (state: RootState) => state.pokeList;
   const selectLoading = (state: RootState) => state.loading;
@@ -80,41 +96,10 @@ const Home = () => {
   };
 
   const handleSort = () => {
-    // Get the selected sorting value
-    const selectedSort = radioButtons.find(r => r.selected)?.value;
-    dispatch({type: SORT_POKEMON, payload: {pokeList, sortBy: selectedSort}});
+    const by = selectedId === '1' ? 'id' : 'name'
+    dispatch(sortPokemon(by,pokeList))
     setSortDialogVisible(false); // Close dialog after sorting
   };
-
-  {
-    /* Sort Dialog */
-  }
-  <Dialog
-    visible={sortDialogVisible}
-    onTouchOutside={() => setSortDialogVisible(false)}
-    title="Sort Options"
-    animationType="fade"
-    onRequestClose={function (): void {
-      throw new Error('Function not implemented.');
-    }}
-    contentInsetAdjustmentBehavior={undefined}>
-    <RadioGroup
-      radioButtons={radioButtons}
-      onPress={selectedId => {
-        const updatedButtons = radioButtons.map(button => ({
-          ...button,
-          selected: button.id === selectedId,
-        }));
-        setRadioButtons(updatedButtons);
-      }}
-    />
-
-    <View style={{marginTop: 20}}>
-      <Text style={styles.sortButton} onPress={handleSort}>
-        Apply Sort
-      </Text>
-    </View>
-  </Dialog>;
 
   // If data is loading or there's an error, handle accordingly
   if (error) return <Text>Error: {error.message}</Text>;
@@ -124,7 +109,6 @@ const Home = () => {
         <PokemonBall width={30} height={30} fill={'#FFF'} />
         <Text style={[styles.headerTitle, {marginLeft: 10}]}>Pokédex</Text>
       </View>
-
       <View style={[styles.headerBar]}>
         <Search
           onDischarge={() => dischargeSearch()}
@@ -135,11 +119,29 @@ const Home = () => {
         <View style={{width: 15}} />
         <RoundButton
           onPress={() => {
-            console.log("show dialog")
+            console.log('show dialog');
             setSortDialogVisible(true);
           }}
         />
       </View>
+
+      <Dialog
+        visible={sortDialogVisible}
+        onTouchOutside={() => setSortDialogVisible(false)}
+        title="Sort Options"
+        animationType="fade"
+        onRequestClose={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+        contentInsetAdjustmentBehavior={undefined}>
+        <RadioGroup selectedId={selectedId} radioButtons={buttons}></RadioGroup>
+
+        <View style={{marginTop: 20}}>
+          <Text style={styles.sortButton} onPress={handleSort}>
+            Apply Sort
+          </Text>
+        </View>
+      </Dialog>
 
       <View style={styles.scaffold}>
         {loading ? (

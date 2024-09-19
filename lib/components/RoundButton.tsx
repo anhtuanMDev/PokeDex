@@ -3,11 +3,13 @@ import React from 'react';
 import ImageVector from './ImageVector';
 import Sort from './../assets/sort.svg';
 
+type Props = {
+  onPress: () => void
+}
 
-
-const RoundButton = ( onPress: {onPress: ()=> void}) => {
+const RoundButton = ( prop: Props) => {
   return (
-    <TouchableHighlight style={styles.container} underlayColor="#f0f0f0" onPress={() => {onPress}}>
+    <TouchableHighlight style={styles.container} underlayColor="#f0f0f0" onPress={() => prop.onPress()}>
       <ImageVector image={<Sort width={30} height={30} fill={"#DC0A2D"} />} />
     </TouchableHighlight>
   );
